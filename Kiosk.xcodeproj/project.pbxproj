@@ -433,6 +433,7 @@
 		5EFFE24D1B977DD3006BF64C /* SaleArtworkViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SaleArtworkViewModel.swift; sourceTree = "<group>"; };
 		5EFFE24F1B978C3C006BF64C /* ListingsViewModelTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListingsViewModelTests.swift; sourceTree = "<group>"; };
 		B5DFB9BD12B5173B74D620D7 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B81628F11C51EB4000D8688C /* Pods */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Pods; sourceTree = "<group>"; };
 		BDA79D9FDF198B37A06B262F /* Pods-KioskTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KioskTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-KioskTests/Pods-KioskTests.release.xcconfig"; sourceTree = "<group>"; };
 		CB3EBEE2789DABF779E6EB67 /* Pods-KioskTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-KioskTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-KioskTests/Pods-KioskTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E70556721BC40BFB0064ABF8 /* MyBidPosition.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MyBidPosition.json; sourceTree = "<group>"; };
@@ -880,6 +881,7 @@
 		EDE935AE93E27C7CD4C012CE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B81628F11C51EB4000D8688C /* Pods */,
 				B5DFB9BD12B5173B74D620D7 /* Pods.framework */,
 				3AC6D95F6020DA76AECC315F /* Pods_KioskTests.framework */,
 			);
@@ -943,7 +945,7 @@
 				TargetAttributes = {
 					5EB0B6EC1A5C3E6800B7CBF2 = {
 						CreatedOnToolsVersion = 6.1.1;
-						DevelopmentTeam = ZH8TGFYKDK;
+						DevelopmentTeam = H7WXS2DB9H;
 					};
 					5EB0B7011A5C3E6800B7CBF2 = {
 						CreatedOnToolsVersion = 6.1.1;
@@ -1414,7 +1416,7 @@
 				);
 				INFOPLIST_FILE = "Kiosk/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				PRODUCT_BUNDLE_IDENTIFIER = net.artsy.kiosk.beta;
+				PRODUCT_BUNDLE_IDENTIFIER = com.uthen.kiosk.beta;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Kiosk/Supporting Files/BridgingHeader.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1428,7 +1430,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				CURRENT_PROJECT_VERSION = 2015.11.11;
 				ENABLE_BITCODE = NO;
@@ -1440,7 +1442,7 @@
 				);
 				INFOPLIST_FILE = "Kiosk/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				PRODUCT_BUNDLE_IDENTIFIER = net.artsy.kiosk.beta;
+				PRODUCT_BUNDLE_IDENTIFIER = com.uthen.kiosk.beta;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "$(PROFILE_UDID)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Kiosk/Supporting Files/BridgingHeader.h";
