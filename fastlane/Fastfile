@@ -61,7 +61,7 @@ lane :deploy do |options|
   version = options[:version]
   raise "You must specify a version in A.B.X format to deploy." if version.nil? || version.scan(/\d+\.\d+\.\d+/).length == 0
 
-  hockey_api_token = ENV['c105ffe731094a72a748b6d2b2ccfa7a']
+  hockey_api_token = ENV['ae5b0ab9c71f4536b3e1346985b2a6a8']
   raise "You must specify a HOCKEY_API_TOKEN environment variable to deploy." if hockey_api_token.nil?
 
   # Make sure not to ship with OSS
