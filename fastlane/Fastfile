@@ -1,6 +1,12 @@
 require 'yaml'
 
-fastlane_version "1.0.2"
+fastlane_version "1.53.0"
+
+# platform :ios do
+
+# before_all do
+#    ensure_git_status_clean
+# end
 
 desc "Run all iOS tests on an iPad"
 lane :test do
@@ -13,17 +19,17 @@ end
 
 desc "Set all the API keys required for distribution"
 lane :oss do
-  keys = ['ArtsyAPIClientSecret', 
-    'ArtsyAPIClientKey', 
-    'HockeyProductionSecret', 
-    'HockeyBetaSecret', 
-    'MixpanelProductionAPIClientKey', 
-    'MixpanelStagingAPIClientKey', 
-    'CardflightStagingAPIClientKey', 
-    'CardflightStagingMerchantAccountToken', 
-    'StripeStagingPublishableKey', 
-    'CardflightProductionAPIClientKey', 
-    'CardflightProductionMerchantAccountToken', 
+  keys = ['ArtsyAPIClientSecret',
+    'ArtsyAPIClientKey',
+    'HockeyProductionSecret',
+    'HockeyBetaSecret',
+    'MixpanelProductionAPIClientKey',
+    'MixpanelStagingAPIClientKey',
+    'CardflightStagingAPIClientKey',
+    'CardflightStagingMerchantAccountToken',
+    'StripeStagingPublishableKey',
+    'CardflightProductionAPIClientKey',
+    'CardflightProductionMerchantAccountToken',
     'StripeProductionPublishableKey']
 
     commands = keys.map { |key|
@@ -55,7 +61,7 @@ lane :deploy do |options|
   version = options[:version]
   raise "You must specify a version in A.B.X format to deploy." if version.nil? || version.scan(/\d+\.\d+\.\d+/).length == 0
 
-  hockey_api_token = ENV['HOCKEY_API_TOKEN']
+  hockey_api_token = ENV['c105ffe731094a72a748b6d2b2ccfa7a']
   raise "You must specify a HOCKEY_API_TOKEN environment variable to deploy." if hockey_api_token.nil?
 
   # Make sure not to ship with OSS
@@ -128,9 +134,9 @@ EOS
   clean_build_artifacts
 
   # Tag release and push to GitHub
-  sh "git add .. ; git commit -m 'Deploying version #{version}.'" # Can't use commit_version_bump to include changelog changes
-  add_git_tag tag: version
-  push_to_git_remote
+   sh "git add .. ; git commit -m 'Deploying version #{version}.'" # Can't use commit_version_bump to include changelog changes
+   add_git_tag tag: version
+   push_to_git_remote
 end
 
 desc "Updates the storyboard identifier Swift values."
