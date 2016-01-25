@@ -2,148 +2,152 @@ require 'yaml'
 
 fastlane_version "1.53.0"
 
-before_all do
-    # ensure_git_status_clean
-end
+default_platform :ios
 
-desc "Run all iOS tests on an iPad"
-lane :test do
-  xcodebuild(
-    build: true,
-    test: true,
-    destination: "OS=9.1,name=iPad Air"
-  )
-end
+platform :ios do
+  before_all do
+      ensure_git_status_clean
+  end
 
-desc "Set all the API keys required for distribution"
-lane :oss do
-  keys = ['ArtsyAPIClientSecret',
-    'ArtsyAPIClientKey',
-    'HockeyProductionSecret',
-    'HockeyBetaSecret',
-    'MixpanelProductionAPIClientKey',
-    'MixpanelStagingAPIClientKey',
-    'CardflightStagingAPIClientKey',
-    'CardflightStagingMerchantAccountToken',
-    'StripeStagingPublishableKey',
-    'CardflightProductionAPIClientKey',
-    'CardflightProductionMerchantAccountToken',
-    'StripeProductionPublishableKey']
+  desc "Run all iOS tests on an iPad"
+  lane :test do
+    xcodebuild(
+      build: true,
+      test: true,
+      destination: "OS=9.1,name=iPad Air"
+    )
+  end
 
-    commands = keys.map { |key|
-      command = "bundle exec pod keys set #{key} '-'"
-      if key == keys.first
-        command += " Eidolon"
-      end
+  desc "Set all the API keys required for distribution"
+  lane :oss do
+    keys = ['ArtsyAPIClientSecret',
+      'ArtsyAPIClientKey',
+      'HockeyProductionSecret',
+      'HockeyBetaSecret',
+      'MixpanelProductionAPIClientKey',
+      'MixpanelStagingAPIClientKey',
+      'CardflightStagingAPIClientKey',
+      'CardflightStagingMerchantAccountToken',
+      'StripeStagingPublishableKey',
+      'CardflightProductionAPIClientKey',
+      'CardflightProductionMerchantAccountToken',
+      'StripeProductionPublishableKey']
 
-      command
-    }.join(' ; ')
+      commands = keys.map { |key|
+        command = "bundle exec pod keys set #{key} '-'"
+        if key == keys.first
+          command += " Eidolon"
+        end
 
-    sh "cd .. ; #{commands}"
+        command
+      }.join(' ; ')
 
-    cocoapods
-end
+      sh "cd .. ; #{commands}"
 
-desc "Release a new beta version on Hockey"
-desc "This action does the following:"
-desc ""
-desc "- Verifies API keys are non-empty"
-desc "- Ensures a clean git status"
-desc "- Increment the build number"
-desc "- Build and sign the app"
-desc "- Upload the ipa file to hockey"
-desc "- Post a message to slack containing the download link"
-desc "- Commit and push the version bump"
-lane :deploy do |options|
+      cocoapods
+  end
 
-  version = options[:version]
-  raise "You must specify a version in A.B.X format to deploy." if version.nil? || version.scan(/\d+\.\d+\.\d+/).length == 0
+  desc "Release a new beta version on Hockey"
+  desc "This action does the following:"
+  desc ""
+  desc "- Verifies API keys are non-empty"
+  desc "- Ensures a clean git status"
+  desc "- Increment the build number"
+  desc "- Build and sign the app"
+  desc "- Upload the ipa file to hockey"
+  desc "- Post a message to slack containing the download link"
+  desc "- Commit and push the version bump"
+  lane :deploy do |options|
 
-  hockey_api_token = ENV['ae5b0ab9c71f4536b3e1346985b2a6a8']
-  raise "You must specify a HOCKEY_API_TOKEN environment variable to deploy." if hockey_api_token.nil?
+    version = options[:version]
+    raise "You must specify a version in A.B.X format to deploy." if version.nil? || version.scan(/\d+\.\d+\.\d+/).length == 0
 
-  # Make sure not to ship with OSS
-  verify_pod_keys
+    hockey_api_token = ENV['ae5b0ab9c71f4536b3e1346985b2a6a8']
+    raise "You must specify a HOCKEY_API_TOKEN environment variable to deploy." if hockey_api_token.nil?
 
-  # Make sure we start off with a clean slate
-  ensure_git_status_clean
+    # Make sure not to ship with OSS
+    verify_pod_keys
 
-  # Increment build number to current date
-  build_number = Time.new.strftime("%Y.%m.%d")
-  increment_build_number build_number: build_number
+    # Make sure we start off with a clean slate
+    ensure_git_status_clean
 
-  # Generate release notes from CHANGELOG
-  changelog_filename = '../CHANGELOG.yml'
-  changelog_yaml = YAML.load_file(changelog_filename)
-  release_notes = changelog_yaml['upcoming'].map{ |note| note.prepend '- ' }.join("\n")
+    # Increment build number to current date
+    build_number = Time.new.strftime("%Y.%m.%d")
+    increment_build_number build_number: build_number
 
-  # Increment to the specified version number
-  increment_version_number version_number: version
+    # Generate release notes from CHANGELOG
+    changelog_filename = '../CHANGELOG.yml'
+    changelog_yaml = YAML.load_file(changelog_filename)
+    release_notes = changelog_yaml['upcoming'].map{ |note| note.prepend '- ' }.join("\n")
 
-  # Add a changelog entry for this version
+    # Increment to the specified version number
+    increment_version_number version_number: version
 
-  changelog_contents = File.read(changelog_filename)
-  existing_releases = changelog_contents.split('releases:').last
-  this_release = changelog_yaml['upcoming'].map{ |note| note.prepend '  ' }.join("\n")
-  changelog_contents = <<-EOS
-upcoming:
+    # Add a changelog entry for this version
 
-releases:
-- version: #{version}
-  date: #{Time.new.strftime("%B %d %Y")}
-  notes:
-#{this_release}
-#{existing_releases}
-EOS
+    changelog_contents = File.read(changelog_filename)
+    existing_releases = changelog_contents.split('releases:').last
+    this_release = changelog_yaml['upcoming'].map{ |note| note.prepend '  ' }.join("\n")
+    changelog_contents = <<-EOS
+  upcoming:
 
-  File.open(changelog_filename, 'w') { |file| file.puts changelog_contents }
+  releases:
+  - version: #{version}
+    date: #{Time.new.strftime("%B %d %Y")}
+    notes:
+  #{this_release}
+  #{existing_releases}
+  EOS
 
-  # Grab the latest profiles from Apple
+    File.open(changelog_filename, 'w') { |file| file.puts changelog_contents }
 
-  sigh
+    # Grab the latest profiles from Apple
 
-  ENV["PROFILE_UDID"] = lane_context[SharedValues::SIGH_UDID]
+    sigh
 
-  # Build
-  gym(
-    scheme: "Kiosk",
-    export_method: 'enterprise',
-    use_legacy_build_api: true
-  )
+    ENV["PROFILE_UDID"] = lane_context[SharedValues::SIGH_UDID]
 
-  # Push to Hockey
-  hockey(
-    api_token: hockey_api_token,
-    notes: release_notes,
-  )
+    # Build
+    gym(
+      scheme: "Kiosk",
+      export_method: 'enterprise',
+      use_legacy_build_api: true
+    )
 
-  # Post message to slack
-  slack(
-    message: "There is a new version of the Kiosk app available. Download it at http://artsy.net/kioskbeta",
-    success: true,        # optional, defaults to true
-    payload: {            # optional, lets you specify any number of your own Slack attachments
-      'Version' => version,
-      'What\'s new' => release_notes,
-    },
-    default_payloads: [],
-  )
+    # Push to Hockey
+    hockey(
+      api_token: hockey_api_token,
+      notes: release_notes,
+    )
 
-  # Make sure our directory is clean, except for changes Fastlane has made
-  clean_build_artifacts
+    # Post message to slack
+    slack(
+      message: "There is a new version of the Kiosk app available. Download it at http://artsy.net/kioskbeta",
+      success: true,        # optional, defaults to true
+      payload: {            # optional, lets you specify any number of your own Slack attachments
+        'Version' => version,
+        'What\'s new' => release_notes,
+      },
+      default_payloads: [],
+    )
 
-  # Tag release and push to GitHub
-   sh "git add .. ; git commit -m 'Deploying version #{version}.'" # Can't use commit_version_bump to include changelog changes
-   add_git_tag tag: version
-   push_to_git_remote
-end
+    # Make sure our directory is clean, except for changes Fastlane has made
+    clean_build_artifacts
 
-desc "Updates the storyboard identifier Swift values."
-lane :storyboard_ids do
-  sh "cd .. ; bundle exec sbconstants Kiosk/Storyboards/StoryboardIdentifiers.swift --source-dir Kiosk/Storyboards --swift"
-end
+    # Tag release and push to GitHub
+     sh "git add .. ; git commit -m 'Deploying version #{version}.'" # Can't use commit_version_bump to include changelog changes
+     add_git_tag tag: version
+     push_to_git_remote
+  end
 
-error do |lane, exception|
-  puts "Unable to deploy, resetting git repository."
-  clean_build_artifacts
-  reset_git_repo
+  desc "Updates the storyboard identifier Swift values."
+  lane :storyboard_ids do
+    sh "cd .. ; bundle exec sbconstants Kiosk/Storyboards/StoryboardIdentifiers.swift --source-dir Kiosk/Storyboards --swift"
+  end
+
+  error do |lane, exception|
+    puts "Unable to deploy, resetting git repository."
+    clean_build_artifacts
+    reset_git_repo
+  end
 end

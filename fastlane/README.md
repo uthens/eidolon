@@ -5,19 +5,20 @@ fastlane documentation
 sudo gem install fastlane
 ```
 # Available Actions
-### test
+## iOS
+### ios test
 ```
-fastlane test
+fastlane ios test
 ```
 Run all iOS tests on an iPad
-### oss
+### ios oss
 ```
-fastlane oss
+fastlane ios oss
 ```
 Set all the API keys required for distribution
-### deploy
+### ios deploy
 ```
-fastlane deploy
+fastlane ios deploy
 ```
 Release a new beta version on Hockey
 
@@ -38,9 +39,9 @@ This action does the following:
 - Post a message to slack containing the download link
 
 - Commit and push the version bump
-### storyboard_ids
+### ios storyboard_ids
 ```
-fastlane storyboard_ids
+fastlane ios storyboard_ids
 ```
 Updates the storyboard identifier Swift values.
 
