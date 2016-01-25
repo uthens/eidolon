@@ -5,7 +5,7 @@ fastlane_version "1.53.0"
 # platform :ios do
 
 before_all do
-    ensure_git_status_clean
+    # ensure_git_status_clean
 end
 
 desc "Run all iOS tests on an iPad"
@@ -68,7 +68,7 @@ lane :deploy do |options|
   verify_pod_keys
 
   # Make sure we start off with a clean slate
-  # ensure_git_status_clean
+  ensure_git_status_clean
 
   # Increment build number to current date
   build_number = Time.new.strftime("%Y.%m.%d")
