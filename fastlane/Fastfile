@@ -2,8 +2,6 @@ require 'yaml'
 
 fastlane_version "1.53.0"
 
-# platform :ios do
-
 before_all do
     # ensure_git_status_clean
 end
